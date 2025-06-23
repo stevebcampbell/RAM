@@ -1,0 +1,29 @@
+# RandomAccessMind Live Thoughts Capture System Requirements
+# Install with: pip install -r requirements.txt
+
+# Core WebSocket and async support
+websockets>=12.0
+
+# Keystroke capture
+pynput>=1.7.6
+
+# Natural Language Processing
+nltk>=3.8.1
+
+# System monitoring
+psutil>=5.9.6
+
+# macOS application detection (for macOS users)
+pyobjc-framework-Cocoa>=10.0; sys_platform == "darwin"
+
+# Windows application detection (for Windows users)
+pywin32>=306; sys_platform == "win32"
+
+# General utilities
+python-dateutil>=2.8.2
+requests>=2.31.0
+
+# Development dependencies
+pytest>=7.4.3
+black>=23.11.0
+flake8>=6.1.0
