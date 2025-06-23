@@ -119,7 +119,7 @@ CREATE TRIGGER update_daily_stats_updated_at
 
 -- Create a view for recent activity summary
 CREATE OR REPLACE VIEW recent_activity_summary AS
-SELECT 
+SELECT
     DATE(timestamp) as activity_date,
     app,
     COUNT(*) as entry_count,
@@ -127,7 +127,7 @@ SELECT
     SUM(char_count) as total_chars,
     MIN(timestamp) as first_entry,
     MAX(timestamp) as last_entry
-FROM consciousness_entries 
+FROM consciousness_entries
 WHERE timestamp >= NOW() - INTERVAL '7 days'
 GROUP BY DATE(timestamp), app
 ORDER BY activity_date DESC, entry_count DESC;
@@ -145,31 +145,31 @@ DECLARE
     productivity DECIMAL(5,2);
 BEGIN
     -- Get basic stats for the date
-    SELECT 
+    SELECT
         COALESCE(SUM(LENGTH(content) / 5), 0),  -- Rough word count
         COALESCE(AVG(wmp), 0)
     INTO total_words, avg_wpm
-    FROM consciousness_entries 
+    FROM consciousness_entries
     WHERE DATE(timestamp) = target_date;
-    
+
     -- Calculate consistency (how spread out the entries are)
-    SELECT 
-        CASE 
-            WHEN COUNT(DISTINCT EXTRACT(HOUR FROM timestamp)) > 0 
+    SELECT
+        CASE
+            WHEN COUNT(DISTINCT EXTRACT(HOUR FROM timestamp)) > 0
             THEN (COUNT(DISTINCT EXTRACT(HOUR FROM timestamp))::DECIMAL / 24) * 100
-            ELSE 0 
+            ELSE 0
         END
     INTO consistency_score
-    FROM consciousness_entries 
+    FROM consciousness_entries
     WHERE DATE(timestamp) = target_date;
-    
+
     -- Combine metrics for productivity score
     productivity := LEAST(100, (
         (total_words / 1000.0 * 30) +      -- Word volume (up to 30 points)
         (avg_wpm / 80.0 * 40) +            -- Speed efficiency (up to 40 points)
         (consistency_score * 0.3)          -- Consistency (up to 30 points)
     ));
-    
+
     RETURN COALESCE(productivity, 0);
 END;
 $$;
