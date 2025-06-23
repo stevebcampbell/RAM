@@ -8,6 +8,9 @@
     },
     "app/api/stats/route.ts": {
       "maxDuration": 30
+    },
+    "app/api/test/route.ts": {
+      "maxDuration": 30
     }
   },
   "headers": [
@@ -27,12 +30,6 @@
           "value": "Content-Type, Authorization"
         }
       ]
-    }
-  ],
-  "rewrites": [
-    {
-      "source": "/api/(.*)",
-      "destination": "/api/$1"
     }
   ]
 }
