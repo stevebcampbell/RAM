@@ -72,6 +72,9 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '50');
     const app = searchParams.get('app') || 'all';
+    
+    // Allow public access for consciousness data
+    console.log('📡 Consciousness API: GET request received');
 
     // Try to get real data from Supabase
     try {
@@ -83,6 +86,8 @@ export async function GET(request: NextRequest) {
       if (app !== 'all') {
         entries = entries.filter((entry) => entry.app === app);
       }
+
+      console.log(`✅ Returning ${entries.length} entries from Supabase`);
 
       return NextResponse.json({
         recentEntries: entries,
@@ -103,15 +108,17 @@ export async function GET(request: NextRequest) {
             : mockConsciousnessData.recentEntries.filter(
                 (entry) => entry.app === app
               ),
+        success: true,
         source: 'mock',
       };
 
+      console.log(`⚠️ Returning mock data (${filteredData.recentEntries.length} entries)`);
       return NextResponse.json(filteredData);
     }
   } catch (error) {
     console.error('Error fetching consciousness data:', error);
     return NextResponse.json(
-      { error: 'Failed to fetch consciousness data' },
+      { error: 'Failed to fetch consciousness data', success: false },
       { status: 500 }
     );
   }
@@ -121,10 +128,13 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
 
+    // Allow public POST for consciousness data from Personal Logger
+    console.log('📝 Consciousness API: POST request received');
+
     // Validate required fields
     if (!body.content || !body.timestamp || !body.app) {
       return NextResponse.json(
-        { error: 'Missing required fields: content, timestamp, app' },
+        { error: 'Missing required fields: content, timestamp, app', success: false },
         { status: 400 }
       );
     }
@@ -168,12 +178,13 @@ export async function POST(request: NextRequest) {
         id: Date.now().toString(),
         message: 'Consciousness data received (Supabase not configured)',
         source: 'mock',
+        warning: 'Data not persisted - Supabase configuration needed'
       });
     }
   } catch (error) {
     console.error('Error processing consciousness data:', error);
     return NextResponse.json(
-      { error: 'Failed to process consciousness data' },
+      { error: 'Failed to process consciousness data', success: false },
       { status: 500 }
     );
   }
