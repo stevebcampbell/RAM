@@ -20,23 +20,26 @@ export default function ConsciousnessHubPage() {
       href: '/dashboard',
       icon: '📊',
       title: 'Consciousness Dashboard',
-      description: 'Comprehensive analytics and insights into daily digital consciousness patterns, including activity timelines, app usage, and content analysis.',
-      linkText: 'View Dashboard'
+      description:
+        'Comprehensive analytics and insights into daily digital consciousness patterns, including activity timelines, app usage, and content analysis.',
+      linkText: 'View Dashboard',
     },
     {
       href: '/live-consciousness.html',
       icon: '⚡',
       title: 'Live Stream',
-      description: 'Real-time consciousness stream with typing simulation, showing the flow of thoughts and digital interactions as they happen.',
-      linkText: 'Watch Live'
+      description:
+        'Real-time consciousness stream with typing simulation, showing the flow of thoughts and digital interactions as they happen.',
+      linkText: 'Watch Live',
     },
     {
       href: '/consciousness',
       icon: '🌊',
       title: 'Consciousness Flow',
-      description: 'Interactive exploration of consciousness entries with advanced filtering, search capabilities, and timeline visualization.',
-      linkText: 'Explore Flow'
-    }
+      description:
+        'Interactive exploration of consciousness entries with advanced filtering, search capabilities, and timeline visualization.',
+      linkText: 'Explore Flow',
+    },
   ];
 
   return (
@@ -64,13 +67,17 @@ export default function ConsciousnessHubPage() {
               <div className="text-5xl mb-6 group-hover:scale-110 transition-transform duration-300">
                 {card.icon}
               </div>
-              <h2 className="text-2xl font-bold text-cyan-400 mb-4">{card.title}</h2>
+              <h2 className="text-2xl font-bold text-cyan-400 mb-4">
+                {card.title}
+              </h2>
               <p className="text-slate-300 leading-relaxed mb-6">
                 {card.description}
               </p>
               <span className="inline-flex items-center gap-2 text-cyan-400 font-medium text-lg">
                 {card.linkText}
-                <span className="group-hover:translate-x-2 transition-transform duration-300">→</span>
+                <span className="group-hover:translate-x-2 transition-transform duration-300">
+                  →
+                </span>
               </span>
             </Link>
           ))}
@@ -79,12 +86,17 @@ export default function ConsciousnessHubPage() {
         {/* Status Bar */}
         <div className="inline-flex items-center gap-4 px-8 py-4 bg-cyan-500/10 border border-cyan-500/20 rounded-full backdrop-blur-lg">
           <div className="w-3 h-3 bg-cyan-400 rounded-full animate-pulse"></div>
-          <span className="text-cyan-400 font-medium">Privacy-Protected • Database-Driven • Real-Time Analytics</span>
+          <span className="text-cyan-400 font-medium">
+            Privacy-Protected • Database-Driven • Real-Time Analytics
+          </span>
         </div>
 
         {/* Tech Stack */}
         <div className="mt-8 text-slate-500">
-          <p>Built with Next.js • Supabase • Privacy Filtering • macOS Integration</p>
+          <p>
+            Built with Next.js • Supabase • Privacy Filtering • macOS
+            Integration
+          </p>
         </div>
 
         {/* Animated Background Elements */}
@@ -97,7 +109,7 @@ export default function ConsciousnessHubPage() {
                 left: `${Math.random() * 100}%`,
                 top: `${Math.random() * 100}%`,
                 animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${2 + Math.random() * 3}s`
+                animationDuration: `${2 + Math.random() * 3}s`,
               }}
             />
           ))}

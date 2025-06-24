@@ -63,9 +63,9 @@ export default function ConsciousnessPage() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [timeRange, setTimeRange] = useState('7d');
   const [selectedApp, setSelectedApp] = useState('all');
-  const [dataSource, setDataSource] = useState<'supabase' | 'mock' | 'loading' | 'real_data'>(
-    'loading'
-  );
+  const [dataSource, setDataSource] = useState<
+    'supabase' | 'mock' | 'loading' | 'real_data'
+  >('loading');
   const [connectionStatus, setConnectionStatus] = useState<
     'connected' | 'disconnected' | 'connecting'
   >('connecting');
@@ -121,18 +121,19 @@ export default function ConsciousnessPage() {
         const staticResponse = await fetch('/consciousness-data.json');
         if (staticResponse.ok) {
           const staticData = await staticResponse.json();
-          
+
           if (staticData.connection_info?.real_data) {
             // Transform static data to match expected format
-            const transformedEntries = staticData.entries?.map((entry: any, index: number) => ({
-              id: entry.id || String(index),
-              timestamp: new Date(entry.timestamp),
-              content: entry.content,
-              app: entry.app,
-              type: entry.type || 'live_typing',
-              wpm: entry.wpm,
-              context: entry.context || 'General',
-            })) || [];
+            const transformedEntries =
+              staticData.entries?.map((entry: any, index: number) => ({
+                id: entry.id || String(index),
+                timestamp: new Date(entry.timestamp),
+                content: entry.content,
+                app: entry.app,
+                type: entry.type || 'live_typing',
+                wpm: entry.wpm,
+                context: entry.context || 'General',
+              })) || [];
 
             setLiveEntries(transformedEntries);
             setDataSource('real_data');
@@ -142,24 +143,26 @@ export default function ConsciousnessPage() {
             console.log(`🧠 Loaded REAL data from macOS logger:`, {
               entries: transformedEntries.length,
               lastUpdate: staticData.last_update,
-              wordsToday: staticData.daily_stats?.words_today
+              wordsToday: staticData.daily_stats?.words_today,
             });
 
             // Set basic daily stats from our data
             const today = new Date().toISOString().split('T')[0];
-            setDailyStats([{
-              date: today,
-              wordCount: staticData.daily_stats?.words_today || 0,
-              avgWpm: staticData.daily_stats?.avg_wpm || 68,
-              accuracy: staticData.daily_stats?.accuracy || 94,
-              activeTime: 300, // 5 hours in minutes
-              topApps: staticData.daily_stats?.top_apps || [
-                { name: 'VS Code', usage: 45 },
-                { name: 'Chrome', usage: 25 },
-                { name: 'Terminal', usage: 15 }
-              ],
-              productivity: 87
-            }]);
+            setDailyStats([
+              {
+                date: today,
+                wordCount: staticData.daily_stats?.words_today || 0,
+                avgWpm: staticData.daily_stats?.avg_wpm || 68,
+                accuracy: staticData.daily_stats?.accuracy || 94,
+                activeTime: 300, // 5 hours in minutes
+                topApps: staticData.daily_stats?.top_apps || [
+                  { name: 'VS Code', usage: 45 },
+                  { name: 'Chrome', usage: 25 },
+                  { name: 'Terminal', usage: 15 },
+                ],
+                productivity: 87,
+              },
+            ]);
 
             return; // Success with real data, exit early
           }
@@ -308,8 +311,8 @@ export default function ConsciousnessPage() {
               >
                 <Database className="h-3 w-3" />
                 <span>
-                  {dataSource === 'supabase' 
-                    ? 'Supabase' 
+                  {dataSource === 'supabase'
+                    ? 'Supabase'
                     : dataSource === 'real_data'
                     ? 'Real Data'
                     : 'Mock Data'}

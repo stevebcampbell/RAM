@@ -1,7 +1,7 @@
 'use client';
 
-import { useEffect } from 'react';
 import ClientBrain3D from '@/components/ClientBrain3D';
+import { useEffect } from 'react';
 
 export default function HomePage() {
   useEffect(() => {

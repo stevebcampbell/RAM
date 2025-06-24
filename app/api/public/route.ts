@@ -11,15 +11,15 @@ export async function GET() {
       status: 'public',
       data: {
         totalEntries: '~',
-        todayEntries: '~', 
+        todayEntries: '~',
         avgWpm: '~',
-        activeHours: '~'
+        activeHours: '~',
       },
       redirect: {
         dashboard: '/dashboard.html',
         hub: '/hub.html',
-        livethoughts: '/live-consciousness.html'
-      }
+        livethoughts: '/live-consciousness.html',
+      },
     };
 
     return NextResponse.json(response, {
@@ -28,22 +28,22 @@ export async function GET() {
         'Access-Control-Allow-Methods': 'GET, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
         'Cache-Control': 'no-cache',
-        'x-vercel-skip-toolbar': '1'
-      }
+        'x-vercel-skip-toolbar': '1',
+      },
     });
   } catch (error) {
     return NextResponse.json(
-      { 
-        success: false, 
+      {
+        success: false,
         error: 'Server error',
-        message: 'Public API endpoint error'
+        message: 'Public API endpoint error',
       },
-      { 
+      {
         status: 500,
         headers: {
           'Access-Control-Allow-Origin': '*',
-          'x-vercel-skip-toolbar': '1'
-        }
+          'x-vercel-skip-toolbar': '1',
+        },
       }
     );
   }
@@ -56,7 +56,7 @@ export async function OPTIONS() {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
-      'x-vercel-skip-toolbar': '1'
-    }
+      'x-vercel-skip-toolbar': '1',
+    },
   });
 }

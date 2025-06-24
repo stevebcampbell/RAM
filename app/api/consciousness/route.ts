@@ -72,12 +72,16 @@ export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const limit = parseInt(searchParams.get('limit') || '50');
     const app = searchParams.get('app') || 'all';
-    
+
     // Allow public access for consciousness data
     console.log('📡 Consciousness API: GET request received');
 
     // Try to get real data from Supabase
     try {
+      console.log('🔍 Attempting to connect to Supabase...');
+      console.log('📍 Supabase URL configured:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
+      console.log('🔑 Supabase Key configured:', !!process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY);
+      
       let entries = await supabaseApi.getRecentEntries(limit);
       const dailyStats = await supabaseApi.getDailyStats(30);
       const todayStats = await supabaseApi.getTodayStats();
@@ -97,6 +101,7 @@ export async function GET(request: NextRequest) {
         source: 'supabase',
       });
     } catch (supabaseError) {
+      console.error('❌ Supabase error details:', supabaseError);
       console.warn('Supabase not available, using mock data:', supabaseError);
 
       // Fallback to mock data if Supabase isn't configured
@@ -112,7 +117,9 @@ export async function GET(request: NextRequest) {
         source: 'mock',
       };
 
-      console.log(`⚠️ Returning mock data (${filteredData.recentEntries.length} entries)`);
+      console.log(
+        `⚠️ Returning mock data (${filteredData.recentEntries.length} entries)`
+      );
       return NextResponse.json(filteredData);
     }
   } catch (error) {
@@ -134,7 +141,10 @@ export async function POST(request: NextRequest) {
     // Validate required fields
     if (!body.content || !body.timestamp || !body.app) {
       return NextResponse.json(
-        { error: 'Missing required fields: content, timestamp, app', success: false },
+        {
+          error: 'Missing required fields: content, timestamp, app',
+          success: false,
+        },
         { status: 400 }
       );
     }
@@ -178,7 +188,7 @@ export async function POST(request: NextRequest) {
         id: Date.now().toString(),
         message: 'Consciousness data received (Supabase not configured)',
         source: 'mock',
-        warning: 'Data not persisted - Supabase configuration needed'
+        warning: 'Data not persisted - Supabase configuration needed',
       });
     }
   } catch (error) {
