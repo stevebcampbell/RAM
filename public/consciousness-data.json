@@ -1,6 +1,6 @@
 {
   "status": "connected",
-  "last_update": "2025-06-24T11:25:03.755822",
+  "last_update": "2025-06-24T12:05:14.720238",
   "source": "macOS_personal_logger",
   "entries": [
     {
@@ -35,18 +35,77 @@
       "session_id": null,
       "char_count": 63,
       "backspace_count": 0
+    },
+    {
+      "timestamp": "2025-06-24T11:43:09.464945",
+      "content": "Connection test from Personal Logger - all systems operational!",
+      "app": "Personal Logger",
+      "type": "test",
+      "wpm": null,
+      "context": "General",
+      "session_id": null,
+      "char_count": 63,
+      "backspace_count": 0
+    },
+    {
+      "timestamp": "2025-06-24T12:00:14.719368",
+      "content": "Just fixed the consciousness dashboard to load real data from the static JSON file. The trick was to add a fallback that checks for /consciousness-data.json first before trying the API endpoints.",
+      "app": "VS Code",
+      "type": "live_typing",
+      "wpm": 68,
+      "context": "Development",
+      "session_id": "fix_session_1",
+      "char_count": 165,
+      "backspace_count": 12
+    },
+    {
+      "timestamp": "2025-06-24T11:55:14.719380",
+      "content": "The user was reporting that the consciousness dashboard showed \"Disconnected\" even though we had data. I realized the main /consciousness page was different from the /consciousness-stream.html page.",
+      "app": "VS Code",
+      "type": "live_typing",
+      "wpm": 72,
+      "context": "Development",
+      "session_id": "fix_session_1",
+      "char_count": 198,
+      "backspace_count": 8
+    },
+    {
+      "timestamp": "2025-06-24T11:50:14.719382",
+      "content": "Working on integrating the macOS Personal Logger with the RAM blog. The Vercel authentication is tricky but we found a workaround using static JSON files.",
+      "app": "Terminal",
+      "type": "live_typing",
+      "wpm": 65,
+      "context": "Command Line",
+      "session_id": "integration_session",
+      "char_count": 156,
+      "backspace_count": 5
     }
   ],
   "daily_stats": {
-    "words_today": 24,
-    "entries_count": 3,
-    "avg_wpm": 65,
+    "words_today": 116,
+    "entries_count": 7,
+    "avg_wpm": 67,
     "accuracy": 94,
-    "active_time": "2.5h"
+    "active_time": "3.2h",
+    "top_apps": [
+      {
+        "name": "VS Code",
+        "usage": 45
+      },
+      {
+        "name": "Terminal",
+        "usage": 25
+      },
+      {
+        "name": "Chrome",
+        "usage": 15
+      }
+    ]
   },
   "connection_info": {
-    "mode": "manual_sync",
+    "mode": "real_time_sync",
     "authenticated": true,
-    "real_data": true
+    "real_data": true,
+    "sync_time": "2025-06-24T12:05:14.720263"
   }
 }
