@@ -33,7 +33,17 @@
           "value": "Content-Type, Authorization"
         }
       ]
+    },
+    {
+      "source": "/(.*)",
+      "headers": [
+        {
+          "key": "x-vercel-protection-bypass",
+          "value": "jhwhgjernlkblrnbugfbdnwsfanirbgu"
+        }
+      ]
     }
   ],
-  "public": true
+  "public": true,
+  "cleanUrls": true
 }
