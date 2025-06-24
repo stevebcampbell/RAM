@@ -31,6 +31,10 @@
         {
           "key": "Access-Control-Allow-Headers",
           "value": "Content-Type, Authorization"
+        },
+        {
+          "key": "x-vercel-skip-toolbar",
+          "value": "1"
         }
       ]
     },
@@ -40,10 +44,19 @@
         {
           "key": "x-vercel-protection-bypass",
           "value": "jhwhgjernlkblrnbugfbdnwsfanirbgu"
+        },
+        {
+          "key": "x-vercel-skip-toolbar",
+          "value": "1"
         }
       ]
     }
   ],
   "public": true,
-  "cleanUrls": true
+  "cleanUrls": true,
+  "trailingSlash": false,
+  "env": {
+    "VERCEL_TOOLBAR": "0",
+    "VERCEL_PROTECTION_BYPASS": "jhwhgjernlkblrnbugfbdnwsfanirbgu"
+  }
 }
