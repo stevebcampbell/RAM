@@ -334,12 +334,42 @@
         // Load consciousness data
         async function loadConsciousnessData() {
             try {
+                // Try API first for real-time data
+                const apiResponse = await fetch('/api/consciousness?limit=20', {
+                    headers: {
+                        'x-vercel-protection-bypass': 'jhwhgjernlkblrnbugfbdnwsfanirbgu'
+                    }
+                });
+                
+                if (apiResponse.ok) {
+                    const apiData = await apiResponse.json();
+                    console.log('API Response:', apiData);
+                    
+                    if (apiData.recentEntries && apiData.recentEntries.length > 0) {
+                        // Use API data
+                        consciousnessData = {
+                            source: apiData.source,
+                            last_update: new Date().toISOString(),
+                            all_entries: apiData.recentEntries,
+                            entries: apiData.recentEntries.slice(-5) // Last 5 for display
+                        };
+                        
+                        updateStatus();
+                        organizeDailyData();
+                        startLiveTypingSimulation();
+                        console.log('Using live API data');
+                        return;
+                    }
+                }
+                
+                // Fallback to static file
                 const response = await fetch('/consciousness-data.json');
                 if (response.ok) {
                     consciousnessData = await response.json();
                     updateStatus();
                     organizeDailyData();
                     startLiveTypingSimulation();
+                    console.log('Using static consciousness data');
                 } else {
                     showDemoData();
                 }
@@ -486,15 +516,52 @@
         }
         
         function startLiveTypingSimulation() {
-            if (!consciousnessData?.entries?.length) return;
+            console.log('Starting database-driven typing simulation...');
             
-            // Get the most recent entry for live typing simulation
-            const latestEntry = consciousnessData.entries[consciousnessData.entries.length - 1];
-            const content = latestEntry.content;
+            // Pull fresh data from database and simulate typing
+            loadNewEntriesAndType();
             
-            if (content && !isTyping) {
-                simulateTyping(content, latestEntry);
-            }
+            // Check for new entries every 10 seconds
+            setInterval(loadNewEntriesAndType, 10000);
+        }
+        
+        let lastProcessedTimestamp = null;
+        
+        function loadNewEntriesAndType() {
+            // Get latest entries from database
+            fetch('/consciousness-data.json')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.all_entries && data.all_entries.length > 0) {
+                        // Find entries newer than what we've processed
+                        const newEntries = data.all_entries.filter(entry => {
+                            if (!lastProcessedTimestamp) return true;
+                            return new Date(entry.timestamp) > new Date(lastProcessedTimestamp);
+                        });
+                        
+                        if (newEntries.length > 0) {
+                            console.log(`Found ${newEntries.length} new entries to simulate`);
+                            
+                            // Sort by timestamp
+                            newEntries.sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+                            
+                            // Simulate typing the newest entry
+                            const latestEntry = newEntries[newEntries.length - 1];
+                            simulateTyping(latestEntry.content, latestEntry);
+                            
+                            // Update last processed timestamp
+                            lastProcessedTimestamp = latestEntry.timestamp;
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.log('No new data, continuing simulation with existing entries');
+                    // Fallback to cycling through existing entries
+                    if (consciousnessData?.all_entries?.length > 0) {
+                        const randomEntry = consciousnessData.all_entries[Math.floor(Math.random() * consciousnessData.all_entries.length)];
+                        simulateTyping(randomEntry.content, randomEntry);
+                    }
+                });
         }
         
         function simulateTyping(text, entry) {
