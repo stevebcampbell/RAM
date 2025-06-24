@@ -1,6 +1,33 @@
 import { supabaseApi } from '@/lib/supabase';
 import { NextRequest, NextResponse } from 'next/server';
 
+// Try to connect to local middleware first
+const LOCAL_MIDDLEWARE_URL = 'http://localhost:8888/api/consciousness';
+
+async function tryLocalMiddleware(limit: number = 50): Promise<any> {
+  try {
+    const response = await fetch(`${LOCAL_MIDDLEWARE_URL}?limit=${limit}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      signal: AbortSignal.timeout(2000), // 2 second timeout
+    });
+    
+    if (response.ok) {
+      const data = await response.json();
+      console.log('✅ Connected to local PersonalLogger middleware');
+      return {
+        ...data,
+        source: 'local_middleware',
+        connection: 'direct_to_logger'
+      };
+    }
+  } catch (error: any) {
+    console.log('⚠️ Local middleware not available:', error?.message || 'Connection failed');
+  }
+  return null;
+}
+
 // Mock fallback data for development
 const mockConsciousnessData = {
   recentEntries: [
@@ -76,7 +103,24 @@ export async function GET(request: NextRequest) {
     // Allow public access for consciousness data
     console.log('📡 Consciousness API: GET request received');
 
-    // Try to get real data from Supabase
+    // 1. FIRST: Try to connect to local PersonalLogger middleware
+    console.log('🧠 Attempting to connect to local PersonalLogger middleware...');
+    const localData = await tryLocalMiddleware(limit);
+    
+    if (localData) {
+      // Filter by app if specified
+      if (app !== 'all' && localData.recentEntries) {
+        localData.recentEntries = localData.recentEntries.filter(
+          (entry: any) => entry.app === app
+        );
+      }
+      
+      console.log(`✅ Returning ${localData.recentEntries?.length || 0} entries from local middleware`);
+      return NextResponse.json(localData);
+    }
+
+    // 2. FALLBACK: Try to get data from Supabase
+    console.log('🔍 Local middleware unavailable, trying Supabase...');
     try {
       console.log('🔍 Attempting to connect to Supabase...');
       console.log('📍 Supabase URL configured:', !!process.env.NEXT_PUBLIC_SUPABASE_URL);
