@@ -1,0 +1,66 @@
+{
+  "status": "connected",
+  "last_update": "2025-06-24T02:34:03.585250",
+  "source": "macOS_personal_logger",
+  "entries": [
+    {
+      "timestamp": "2025-06-24T01:52:25.807785",
+      "content": "Testing the updated integration with fallback endpoints!",
+      "app": "Terminal",
+      "type": "live_typing",
+      "wmp": 65,
+      "context": "Command Line",
+      "session_id": null,
+      "char_count": 56,
+      "backspace_count": 0
+    },
+    {
+      "timestamp": "2025-06-24T02:10:06.547816",
+      "content": "Testing the fixed integration - no more typos!",
+      "app": "Terminal",
+      "type": "live_typing",
+      "wpm": 65,
+      "context": "Command Line",
+      "session_id": null,
+      "char_count": 46,
+      "backspace_count": 0
+    },
+    {
+      "timestamp": "2025-06-24T02:26:14.651288",
+      "content": "Connection test from Personal Logger - all systems operational!",
+      "app": "Personal Logger",
+      "type": "test",
+      "wpm": null,
+      "context": "General",
+      "session_id": null,
+      "char_count": 63,
+      "backspace_count": 0
+    }
+  ],
+  "daily_stats": {
+    "words_today": 24,
+    "avg_wpm": 68,
+    "accuracy": 94,
+    "active_time": "5h",
+    "flow_state": 87,
+    "top_apps": [
+      {
+        "name": "VS Code",
+        "usage": 45
+      },
+      {
+        "name": "Chrome",
+        "usage": 25
+      },
+      {
+        "name": "Terminal",
+        "usage": 15
+      }
+    ]
+  },
+  "connection_info": {
+    "mode": "direct_upload",
+    "authenticated": true,
+    "real_data": true
+  }
+}

@@ -219,18 +219,115 @@
     </div>
     
     <script>
-        // Update status
-        document.getElementById('statusIndicator').className = 'status-indicator';
-        document.getElementById('statusText').textContent = 'Demo Mode - Live stream coming soon!';
-        document.getElementById('liveIndicator').textContent = 'DEMO';
-        document.getElementById('liveIndicator').className = 'live-indicator';
+        // Load real consciousness data
+        async function loadConsciousnessData() {
+            try {
+                const response = await fetch('/consciousness-data.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    updateStatusIndicators(data);
+                    displayConsciousnessEntries(data.entries || []);
+                    updateStats(data.daily_stats || {});
+                } else {
+                    console.log('Using demo data - real data not available');
+                    showDemoMode();
+                }
+            } catch (error) {
+                console.log('Loading demo data due to error:', error);
+                showDemoMode();
+            }
+        }
         
-        // Remove loading
-        document.getElementById('loading').style.display = 'none';
+        function updateStatusIndicators(data) {
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            const liveIndicator = document.getElementById('liveIndicator');
+            
+            if (data.status === 'connected' && data.connection_info?.real_data) {
+                statusIndicator.className = 'status-indicator connected';
+                statusText.textContent = `Connected - Real consciousness data (${data.entries?.length || 0} entries)`;
+                liveIndicator.textContent = 'LIVE DATA';
+                liveIndicator.className = 'live-indicator connected';
+            } else {
+                statusIndicator.className = 'status-indicator';
+                statusText.textContent = 'Demo Mode - Live stream coming soon!';
+                liveIndicator.textContent = 'DEMO';
+                liveIndicator.className = 'live-indicator';
+            }
+        }
         
-        // In the future, this will connect to the real API
+        function displayConsciousnessEntries(entries) {
+            const container = document.getElementById('streamContainer');
+            const loading = document.getElementById('loading');
+            
+            if (loading) loading.style.display = 'none';
+            
+            // Clear existing demo entries
+            const demoEntries = container.querySelectorAll('.demo-data');
+            demoEntries.forEach(entry => entry.remove());
+            
+            if (entries.length === 0) {
+                showDemoMode();
+                return;
+            }
+            
+            // Sort entries by timestamp (newest first)
+            const sortedEntries = entries.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            sortedEntries.slice(0, 10).forEach((entry, index) => {
+                const entryElement = createEntryElement(entry);
+                entryElement.style.animationDelay = `${index * 0.1}s`;
+                container.appendChild(entryElement);
+            });
+        }
+        
+        function createEntryElement(entry) {
+            const entryDiv = document.createElement('div');
+            entryDiv.className = 'entry';
+            
+            const timestamp = new Date(entry.timestamp).toLocaleString();
+            const appName = entry.app || 'Unknown';
+            const content = entry.content || '';
+            const wpm = entry.wpm || 0;
+            const context = entry.context || 'General';
+            
+            entryDiv.innerHTML = `
+                <div class="entry-header">
+                    <span class="entry-app">${appName}</span>
+                    <span class="entry-time">${timestamp}</span>
+                </div>
+                <div class="entry-content">${content}</div>
+                <div class="entry-stats">
+                    <span>WPM: ${wpm}</span>
+                    <span>Context: ${context}</span>
+                    <span>Type: ${entry.type || 'live_typing'}</span>
+                </div>
+            `;
+            
+            return entryDiv;
+        }
+        
+        function updateStats(stats) {
+            // Update the stats in the header if elements exist
+            // This would connect to your existing dashboard stats
+            console.log('Daily stats:', stats);
+        }
+        
+        function showDemoMode() {
+            document.getElementById('statusIndicator').className = 'status-indicator';
+            document.getElementById('statusText').textContent = 'Demo Mode - Live stream coming soon!';
+            document.getElementById('liveIndicator').textContent = 'DEMO';
+            document.getElementById('liveIndicator').className = 'live-indicator';
+        }
+        
+        // Load data when page loads
+        document.addEventListener('DOMContentLoaded', loadConsciousnessData);
+        
+        // Refresh data every 30 seconds
+        setInterval(loadConsciousnessData, 30000);
+        
         console.log('🧠 RAM Blog consciousness stream initialized');
-        console.log('📡 Ready for live consciousness data from macOS Personal Logger');
+        console.log('📡 Loading real consciousness data from macOS Personal Logger');
     </script>
 </body>
 </html>
