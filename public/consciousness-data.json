@@ -1,6 +1,6 @@
 {
   "status": "connected",
-  "last_update": "2025-06-24T02:34:03.585250",
+  "last_update": "2025-06-24T11:25:03.755822",
   "source": "macOS_personal_logger",
   "entries": [
     {
@@ -39,27 +39,13 @@
   ],
   "daily_stats": {
     "words_today": 24,
-    "avg_wpm": 68,
+    "entries_count": 3,
+    "avg_wpm": 65,
     "accuracy": 94,
-    "active_time": "5h",
-    "flow_state": 87,
-    "top_apps": [
-      {
-        "name": "VS Code",
-        "usage": 45
-      },
-      {
-        "name": "Chrome",
-        "usage": 25
-      },
-      {
-        "name": "Terminal",
-        "usage": 15
-      }
-    ]
+    "active_time": "2.5h"
   },
   "connection_info": {
-    "mode": "direct_upload",
+    "mode": "manual_sync",
     "authenticated": true,
     "real_data": true
   }
