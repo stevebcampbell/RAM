@@ -1,6 +1,6 @@
 {
   "status": "connected",
-  "last_update": "2025-06-24T12:05:14.720238",
+  "last_update": "2025-06-24T13:12:57.606932",
   "source": "macOS_personal_logger",
   "entries": [
     {
@@ -79,33 +79,28 @@
       "session_id": "integration_session",
       "char_count": 156,
       "backspace_count": 5
+    },
+    {
+      "timestamp": "2025-06-24T13:12:36.085139",
+      "content": "Connection test from Personal Logger - all systems operational!",
+      "app": "Personal Logger",
+      "type": "test",
+      "wpm": null,
+      "context": "General",
+      "session_id": null,
+      "char_count": 63,
+      "backspace_count": 0
     }
   ],
   "daily_stats": {
-    "words_today": 116,
-    "entries_count": 7,
+    "words_today": 125,
+    "entries_count": 8,
     "avg_wpm": 67,
     "accuracy": 94,
-    "active_time": "3.2h",
-    "top_apps": [
-      {
-        "name": "VS Code",
-        "usage": 45
-      },
-      {
-        "name": "Terminal",
-        "usage": 25
-      },
-      {
-        "name": "Chrome",
-        "usage": 15
-      }
-    ]
+    "active_time": "0.3h"
   },
   "connection_info": {
-    "mode": "real_time_sync",
-    "authenticated": true,
     "real_data": true,
-    "sync_time": "2025-06-24T12:05:14.720263"
+    "sync_time": "2025-06-24T13:12:57.607101"
   }
 }
