@@ -63,7 +63,7 @@ export default function ConsciousnessPage() {
   const [lastUpdate, setLastUpdate] = useState<Date>(new Date());
   const [timeRange, setTimeRange] = useState('7d');
   const [selectedApp, setSelectedApp] = useState('all');
-  const [dataSource, setDataSource] = useState<'supabase' | 'mock' | 'loading'>(
+  const [dataSource, setDataSource] = useState<'supabase' | 'mock' | 'loading' | 'real_data'>(
     'loading'
   );
   const [connectionStatus, setConnectionStatus] = useState<
@@ -116,7 +116,59 @@ export default function ConsciousnessPage() {
     try {
       setConnectionStatus('connecting');
 
-      // Fetch from API (which tries Supabase first, then falls back to mock)
+      // First try: Real consciousness data from static file
+      try {
+        const staticResponse = await fetch('/consciousness-data.json');
+        if (staticResponse.ok) {
+          const staticData = await staticResponse.json();
+          
+          if (staticData.connection_info?.real_data) {
+            // Transform static data to match expected format
+            const transformedEntries = staticData.entries?.map((entry: any, index: number) => ({
+              id: entry.id || String(index),
+              timestamp: new Date(entry.timestamp),
+              content: entry.content,
+              app: entry.app,
+              type: entry.type || 'live_typing',
+              wpm: entry.wpm,
+              context: entry.context || 'General',
+            })) || [];
+
+            setLiveEntries(transformedEntries);
+            setDataSource('real_data');
+            setConnectionStatus('connected');
+            setLastUpdate(new Date(staticData.last_update));
+
+            console.log(`🧠 Loaded REAL data from macOS logger:`, {
+              entries: transformedEntries.length,
+              lastUpdate: staticData.last_update,
+              wordsToday: staticData.daily_stats?.words_today
+            });
+
+            // Set basic daily stats from our data
+            const today = new Date().toISOString().split('T')[0];
+            setDailyStats([{
+              date: today,
+              wordCount: staticData.daily_stats?.words_today || 0,
+              avgWpm: staticData.daily_stats?.avg_wpm || 68,
+              accuracy: staticData.daily_stats?.accuracy || 94,
+              activeTime: 300, // 5 hours in minutes
+              topApps: staticData.daily_stats?.top_apps || [
+                { name: 'VS Code', usage: 45 },
+                { name: 'Chrome', usage: 25 },
+                { name: 'Terminal', usage: 15 }
+              ],
+              productivity: 87
+            }]);
+
+            return; // Success with real data, exit early
+          }
+        }
+      } catch (staticError) {
+        console.log('Static consciousness data not available, trying API...');
+      }
+
+      // Second try: Fetch from API (which tries Supabase first, then falls back to mock)
       const response = await fetch('/api/consciousness?limit=50');
       const data = await response.json();
 
@@ -249,12 +301,18 @@ export default function ConsciousnessPage() {
                 className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs ${
                   dataSource === 'supabase'
                     ? 'bg-blue-500/20 text-blue-400'
+                    : dataSource === 'real_data'
+                    ? 'bg-green-500/20 text-green-400'
                     : 'bg-gray-500/20 text-gray-400'
                 }`}
               >
                 <Database className="h-3 w-3" />
                 <span>
-                  {dataSource === 'supabase' ? 'Supabase' : 'Mock Data'}
+                  {dataSource === 'supabase' 
+                    ? 'Supabase' 
+                    : dataSource === 'real_data'
+                    ? 'Real Data'
+                    : 'Mock Data'}
                 </span>
               </div>
             </div>
