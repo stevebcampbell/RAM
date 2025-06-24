@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Steve's Digital Consciousness Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
+            color: #e0e6ed;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .header {
+            background: rgba(20, 20, 40, 0.8);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+            padding: 2rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .brain-icon {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #64ffda, #00bcd4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 10px rgba(100, 255, 218, 0.3));
+        }
+
+        .title {
+            font-size: 2rem;
+            font-weight: 600;
+            background: linear-gradient(45deg, #64ffda, #ffffff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .subtitle {
+            font-size: 1rem;
+            color: #a0a6b8;
+            margin-top: 0.5rem;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            background: rgba(100, 255, 218, 0.1);
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            border-radius: 50px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            background: #64ffda;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .main-content {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 2rem;
+        }
+
+        .card {
+            background: rgba(20, 20, 40, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            border-radius: 20px;
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: rgba(100, 255, 218, 0.3);
+            box-shadow: 0 10px 40px rgba(100, 255, 218, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: #64ffda;
+        }
+
+        .card-icon {
+            font-size: 1.5rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 1.5rem;
+            background: rgba(100, 255, 218, 0.05);
+            border-radius: 15px;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #64ffda;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-label {
+            color: #a0a6b8;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .activity-timeline {
+            height: 300px;
+            overflow-y: auto;
+            padding-right: 1rem;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: rgba(100, 255, 218, 0.05);
+            border-radius: 10px;
+            border-left: 3px solid #64ffda;
+        }
+
+        .timeline-time {
+            color: #64ffda;
+            font-weight: 600;
+            min-width: 80px;
+            font-size: 0.9rem;
+        }
+
+        .timeline-content {
+            flex: 1;
+        }
+
+        .timeline-app {
+            color: #a0a6b8;
+            font-size: 0.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-text {
+            color: #e0e6ed;
+            line-height: 1.4;
+        }
+
+        .app-stats {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .app-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem;
+            background: rgba(100, 255, 218, 0.05);
+            border-radius: 10px;
+        }
+
+        .app-name {
+            font-weight: 600;
+            color: #e0e6ed;
+        }
+
+        .app-count {
+            color: #64ffda;
+            font-weight: 600;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 300px;
+            margin-top: 1rem;
+        }
+
+        .loading {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 200px;
+            color: #a0a6b8;
+        }
+
+        .error {
+            color: #ff6b6b;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .summary-text {
+            background: rgba(100, 255, 218, 0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            margin-top: 1rem;
+            border-left: 4px solid #64ffda;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                padding: 1rem;
+            }
+            
+            .header-content {
+                flex-direction: column;
+                gap: 1rem;
+                text-align: center;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="brain-icon">🧠</div>
+                <div>
+                    <div class="title">Digital Consciousness Dashboard</div>
+                    <div class="subtitle">Real-time insights into Steve's digital mind</div>
+                </div>
+            </div>
+            <div class="status">
+                <div class="status-dot"></div>
+                <span>Connected to Database</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main-content">
+        <!-- Overview Stats -->
+        <div class="card full-width">
+            <h2 class="card-title">
+                <span class="card-icon">📊</span>
+                Today's Overview
+            </h2>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-value" id="total-entries">--</div>
+                    <div class="stat-label">Total Entries</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="total-words">--</div>
+                    <div class="stat-label">Words Logged</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="avg-wpm">--</div>
+                    <div class="stat-label">Average WPM</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-value" id="active-hours">--</div>
+                    <div class="stat-label">Active Hours</div>
+                </div>
+            </div>
+            <div class="summary-text">
+                <strong>Daily Summary:</strong> <span id="daily-summary">Loading your consciousness patterns...</span>
+            </div>
+        </div>
+
+        <!-- Activity Timeline -->
+        <div class="card">
+            <h2 class="card-title">
+                <span class="card-icon">⏰</span>
+                Recent Activity
+            </h2>
+            <div class="activity-timeline" id="timeline">
+                <div class="loading">Loading recent consciousness entries...</div>
+            </div>
+        </div>
+
+        <!-- App Usage -->
+        <div class="card">
+            <h2 class="card-title">
+                <span class="card-icon">💻</span>
+                App Usage
+            </h2>
+            <div class="app-stats" id="app-stats">
+                <div class="loading">Analyzing application patterns...</div>
+            </div>
+        </div>
+
+        <!-- Activity Chart -->
+        <div class="card full-width">
+            <h2 class="card-title">
+                <span class="card-icon">📈</span>
+                Activity Patterns
+            </h2>
+            <div class="chart-container">
+                <canvas id="activity-chart"></canvas>
+            </div>
+        </div>
+
+        <!-- Word Cloud / Insights -->
+        <div class="card full-width">
+            <h2 class="card-title">
+                <span class="card-icon">🔍</span>
+                Content Insights
+            </h2>
+            <div id="content-insights">
+                <div class="loading">Analyzing your digital thoughts...</div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Global data store
+        let consciousnessData = null;
+        let activityChart = null;
+
+        // Load and display dashboard data
+        async function loadDashboard() {
+            try {
+                // Try new dashboard API first
+                const dashboardResponse = await fetch('/api/dashboard', {
+                    headers: {
+                        'x-vercel-protection-bypass': 'jhwhgjernlkblrnbugfbdnwsfanirbgu'
+                    }
+                });
+                
+                if (dashboardResponse.ok) {
+                    const dashboardData = await dashboardResponse.json();
+                    console.log('Dashboard Data:', dashboardData);
+                    
+                    if (dashboardData.success) {
+                        displayDashboardData(dashboardData);
+                        return;
+                    }
+                }
+                
+                // Fallback to old consciousness API
+                const apiResponse = await fetch('/api/consciousness?limit=100', {
+                    headers: {
+                        'x-vercel-protection-bypass': 'jhwhgjernlkblrnbugfbdnwsfanirbgu'
+                    }
+                });
+                
+                if (apiResponse.ok) {
+                    const apiData = await apiResponse.json();
+                    console.log('API Data:', apiData);
+                    
+                    if (apiData.recentEntries && apiData.recentEntries.length > 0) {
+                        consciousnessData = {
+                            source: 'api',
+                            entries: apiData.recentEntries,
+                            last_update: new Date().toISOString()
+                        };
+                        displayDashboard();
+                        return;
+                    }
+                }
+                
+                // Final fallback to static file
+                const response = await fetch('/consciousness-data.json');
+                if (response.ok) {
+                    consciousnessData = await response.json();
+                    consciousnessData.source = 'file';
+                    displayDashboard();
+                } else {
+                    showError("No consciousness data available");
+                }
+                
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showError("Failed to load consciousness data");
+            }
+        }
+
+        function displayDashboardData(data) {
+            // Display stats directly from API
+            document.getElementById('total-entries').textContent = data.stats.today.totalEntries;
+            document.getElementById('total-words').textContent = data.stats.today.totalWords.toLocaleString();
+            document.getElementById('avg-wpm').textContent = data.stats.today.avgWpm;
+            document.getElementById('active-hours').textContent = data.stats.today.activeHours;
+            document.getElementById('daily-summary').textContent = data.dailySummary;
+
+            // Display timeline
+            displayTimelineFromData(data.entries);
+            
+            // Display app stats
+            displayAppStatsFromData(data.appUsage);
+            
+            // Display activity chart
+            displayActivityChartFromData(data.hourlyActivity);
+            
+            // Display content insights
+            displayContentInsightsFromData(data);
+        }
+
+        function displayTimelineFromData(entries) {
+            const timeline = document.getElementById('timeline');
+            
+            if (entries.length === 0) {
+                timeline.innerHTML = '<div class="error">No recent activity found</div>';
+                return;
+            }
+
+            timeline.innerHTML = entries.slice(0, 20).map(entry => {
+                const time = new Date(entry.timestamp).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                const content = entry.content ? entry.content.substring(0, 150) : 'No content';
+                
+                return `
+                    <div class="timeline-item">
+                        <div class="timeline-time">${time}</div>
+                        <div class="timeline-content">
+                            <div class="timeline-app">${entry.app || 'Unknown App'}</div>
+                            <div class="timeline-text">${content}${content.length >= 150 ? '...' : ''}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function displayAppStatsFromData(appUsage) {
+            const appStats = document.getElementById('app-stats');
+            
+            if (appUsage.length === 0) {
+                appStats.innerHTML = '<div class="error">No app data available</div>';
+                return;
+            }
+
+            appStats.innerHTML = appUsage.map(({app, count}) => `
+                <div class="app-item">
+                    <span class="app-name">${app}</span>
+                    <span class="app-count">${count}</span>
+                </div>
+            `).join('');
+        }
+
+        function displayActivityChartFromData(hourlyActivity) {
+            const ctx = document.getElementById('activity-chart').getContext('2d');
+
+            if (activityChart) {
+                activityChart.destroy();
+            }
+
+            activityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+                    datasets: [{
+                        label: 'Activity Level',
+                        data: hourlyActivity,
+                        borderColor: '#64ffda',
+                        backgroundColor: 'rgba(100, 255, 218, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e0e6ed'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#a0a6b8'
+                            },
+                            grid: {
+                                color: 'rgba(100, 255, 218, 0.1)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#a0a6b8'
+                            },
+                            grid: {
+                                color: 'rgba(100, 255, 218, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function displayContentInsightsFromData(data) {
+            const insights = document.getElementById('content-insights');
+            
+            if (data.topWords.length === 0) {
+                insights.innerHTML = '<div class="error">No content to analyze today</div>';
+                return;
+            }
+
+            insights.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                    <div>
+                        <h3 style="color: #64ffda; margin-bottom: 1rem;">Top Words Today</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${data.topWords.slice(0, 10).map(({word, count}) => `
+                                <span style="
+                                    background: rgba(100, 255, 218, 0.1); 
+                                    padding: 0.5rem 1rem; 
+                                    border-radius: 20px; 
+                                    border: 1px solid rgba(100, 255, 218, 0.2);
+                                    font-size: 0.9rem;
+                                ">
+                                    ${word} (${count})
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="color: #64ffda; margin-bottom: 1rem;">Activity Stats</h3>
+                        <div style="color: #a0a6b8; line-height: 1.8;">
+                            <div>📝 Total entries today: ${data.stats.today.totalEntries}</div>
+                            <div>🔤 Total words today: ${data.stats.today.totalWords.toLocaleString()}</div>
+                            <div>📊 Average WPM: ${data.stats.today.avgWpm}</div>
+                            <div>⏰ Active hours: ${data.stats.today.activeHours}</div>
+                            <div>📅 This week: ${data.stats.week.totalEntries} entries</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function displayDashboard() {
+            const entries = consciousnessData.entries || [];
+            const today = new Date().toISOString().split('T')[0];
+            const todayEntries = entries.filter(entry => {
+                const entryDate = new Date(entry.timestamp).toISOString().split('T')[0];
+                return entryDate === today;
+            });
+
+            displayOverviewStats(todayEntries);
+            displayTimeline(entries.slice(0, 20));
+            displayAppStats(todayEntries);
+            displayActivityChart(entries);
+            displayContentInsights(todayEntries);
+        }
+
+        function displayOverviewStats(entries) {
+            const totalEntries = entries.length;
+            const totalWords = entries.reduce((sum, entry) => {
+                return sum + (entry.content ? entry.content.split(' ').length : 0);
+            }, 0);
+            
+            const avgWpm = entries.length > 0 
+                ? Math.round(entries.reduce((sum, entry) => sum + (entry.wpm || 0), 0) / entries.length)
+                : 0;
+            
+            const activeHours = new Set(entries.map(entry => 
+                new Date(entry.timestamp).getHours()
+            )).size;
+
+            document.getElementById('total-entries').textContent = totalEntries;
+            document.getElementById('total-words').textContent = totalWords.toLocaleString();
+            document.getElementById('avg-wpm').textContent = avgWpm;
+            document.getElementById('active-hours').textContent = activeHours;
+
+            // Generate daily summary
+            const summary = generateDailySummary(entries);
+            document.getElementById('daily-summary').textContent = summary;
+        }
+
+        function generateDailySummary(entries) {
+            if (entries.length === 0) return "No activity recorded today.";
+            
+            const apps = [...new Set(entries.map(e => e.app))];
+            const topApp = apps.length > 0 ? apps[0] : "Unknown";
+            const totalWords = entries.reduce((sum, entry) => sum + (entry.content?.split(' ').length || 0), 0);
+            
+            return `Today you've been active across ${apps.length} applications, with most activity in ${topApp}. You've logged ${totalWords} words of digital consciousness, showing a rich tapestry of thoughts and interactions.`;
+        }
+
+        function displayTimeline(entries) {
+            const timeline = document.getElementById('timeline');
+            
+            if (entries.length === 0) {
+                timeline.innerHTML = '<div class="error">No recent activity found</div>';
+                return;
+            }
+
+            timeline.innerHTML = entries.map(entry => {
+                const time = new Date(entry.timestamp).toLocaleTimeString('en-US', {
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                const content = entry.content ? entry.content.substring(0, 150) : 'No content';
+                
+                return `
+                    <div class="timeline-item">
+                        <div class="timeline-time">${time}</div>
+                        <div class="timeline-content">
+                            <div class="timeline-app">${entry.app || 'Unknown App'}</div>
+                            <div class="timeline-text">${content}${content.length >= 150 ? '...' : ''}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function displayAppStats(entries) {
+            const appCounts = {};
+            entries.forEach(entry => {
+                const app = entry.app || 'Unknown';
+                appCounts[app] = (appCounts[app] || 0) + 1;
+            });
+
+            const sortedApps = Object.entries(appCounts)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 10);
+
+            const appStats = document.getElementById('app-stats');
+            
+            if (sortedApps.length === 0) {
+                appStats.innerHTML = '<div class="error">No app data available</div>';
+                return;
+            }
+
+            appStats.innerHTML = sortedApps.map(([app, count]) => `
+                <div class="app-item">
+                    <span class="app-name">${app}</span>
+                    <span class="app-count">${count}</span>
+                </div>
+            `).join('');
+        }
+
+        function displayActivityChart(entries) {
+            const ctx = document.getElementById('activity-chart').getContext('2d');
+            
+            // Group by hour
+            const hourlyActivity = new Array(24).fill(0);
+            entries.forEach(entry => {
+                const hour = new Date(entry.timestamp).getHours();
+                hourlyActivity[hour]++;
+            });
+
+            if (activityChart) {
+                activityChart.destroy();
+            }
+
+            activityChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+                    datasets: [{
+                        label: 'Activity Level',
+                        data: hourlyActivity,
+                        borderColor: '#64ffda',
+                        backgroundColor: 'rgba(100, 255, 218, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#e0e6ed'
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            ticks: {
+                                color: '#a0a6b8'
+                            },
+                            grid: {
+                                color: 'rgba(100, 255, 218, 0.1)'
+                            }
+                        },
+                        y: {
+                            ticks: {
+                                color: '#a0a6b8'
+                            },
+                            grid: {
+                                color: 'rgba(100, 255, 218, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function displayContentInsights(entries) {
+            const insights = document.getElementById('content-insights');
+            
+            if (entries.length === 0) {
+                insights.innerHTML = '<div class="error">No content to analyze today</div>';
+                return;
+            }
+
+            // Analyze content patterns
+            const allText = entries
+                .map(e => e.content || '')
+                .join(' ')
+                .toLowerCase();
+            
+            const words = allText.split(/\s+/).filter(word => 
+                word.length > 3 && 
+                !['this', 'that', 'with', 'have', 'will', 'from', 'they', 'been', 'were', 'said', 'each', 'which', 'their'].includes(word)
+            );
+
+            const wordFreq = {};
+            words.forEach(word => {
+                wordFreq[word] = (wordFreq[word] || 0) + 1;
+            });
+
+            const topWords = Object.entries(wordFreq)
+                .sort(([,a], [,b]) => b - a)
+                .slice(0, 10);
+
+            insights.innerHTML = `
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                    <div>
+                        <h3 style="color: #64ffda; margin-bottom: 1rem;">Top Words Today</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+                            ${topWords.map(([word, count]) => `
+                                <span style="
+                                    background: rgba(100, 255, 218, 0.1); 
+                                    padding: 0.5rem 1rem; 
+                                    border-radius: 20px; 
+                                    border: 1px solid rgba(100, 255, 218, 0.2);
+                                    font-size: 0.9rem;
+                                ">
+                                    ${word} (${count})
+                                </span>
+                            `).join('')}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 style="color: #64ffda; margin-bottom: 1rem;">Content Stats</h3>
+                        <div style="color: #a0a6b8; line-height: 1.8;">
+                            <div>📝 Total characters: ${allText.length.toLocaleString()}</div>
+                            <div>🔤 Unique words: ${Object.keys(wordFreq).length.toLocaleString()}</div>
+                            <div>📊 Avg words per entry: ${Math.round(words.length / entries.length)}</div>
+                            <div>⚡ Most active: ${entries.length > 0 ? new Date(entries[0].timestamp).toLocaleTimeString() : 'N/A'}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function showError(message) {
+            document.querySelector('.main-content').innerHTML = `
+                <div class="card full-width">
+                    <div class="error">${message}</div>
+                </div>
+            `;
+        }
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+
+        // Refresh every 5 minutes
+        setInterval(loadDashboard, 5 * 60 * 1000);
+    </script>
+</body>
+</html>
